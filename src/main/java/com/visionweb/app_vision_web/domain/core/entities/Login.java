@@ -12,13 +12,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Login {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_login")
     private int id_login;
-    private int id_usuario;
-    private String nome;
+
     private String email;
     private String senha;
 
-    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "login", cascade = CascadeType.ALL)
     private Usuario usuario;
+
+    public Login(String email, String senha, Usuario usuario) {
+        this.usuario = usuario;
+        this.email = email;
+        this.senha = senha;
+    }
 
 }

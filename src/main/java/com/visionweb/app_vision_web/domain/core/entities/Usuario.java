@@ -4,6 +4,7 @@ package com.visionweb.app_vision_web.domain.core.entities;
 import com.visionweb.app_vision_web.domain.core.entities.Enum.TipoUsuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.util.Date;
 @Table(name = "usuario")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Usuario {
 
     @Id
@@ -24,15 +26,14 @@ public class Usuario {
     private String email;
     private String departamento;
     private String cargo;
-    @Temporal(TemporalType.DATE)
-    @Column(name = "data_admissao")
-    private Date data_admissao;
     private String perfil_gerencial;
     private boolean ativo;
-
     @Enumerated(EnumType.STRING)
     private TipoUsuario tipo_usuario;
 
+    @OneToOne
+
+    @JoinColumn(name = "login_id", referencedColumnName = "id_login")
     private Login login;
 
 }

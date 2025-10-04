@@ -24,15 +24,4 @@ public class UsuarioController {
         return usuarioService.listarTodos();
     }
 
-    @PostMapping
-    public Usuario post(@RequestBody Usuario usuario) {
-        try{
-            var result = usuarioService.salvar(usuario);
-            return result;
-        }
-        catch (Exception ex){
-            log.error("Exception: "+ ex.getMessage());
-            return null;
-        }
-    }
 }
