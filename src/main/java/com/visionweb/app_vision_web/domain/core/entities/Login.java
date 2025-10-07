@@ -20,7 +20,8 @@ public class Login {
     private String email;
     private String senha;
 
-    @OneToOne(mappedBy = "login", cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario") // FK para Usuario
     private Usuario usuario;
 
     public Login(String email, String senha, Usuario usuario) {

@@ -26,14 +26,12 @@ public class Usuario {
     private String email;
     private String departamento;
     private String cargo;
-    private String perfil_gerencial;
+    private String perfil_geracional;
     private boolean ativo;
     @Enumerated(EnumType.STRING)
     private TipoUsuario tipo_usuario;
 
-    @OneToOne
-
-    @JoinColumn(name = "login_id", referencedColumnName = "id_login")
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
     private Login login;
 
 }
