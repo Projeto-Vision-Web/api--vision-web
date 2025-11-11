@@ -9,8 +9,6 @@ public class UsuarioMapper {
         return Usuario.builder()
                 .nome(dto.getNome())
                 .email(dto.getEmail())
-                .departamento(dto.getDepartamento())
-                .cargo(dto.getCargo())
                 .tipo_usuario(dto.getTipo_usuario())
                 .ativo(true)
                 .build();

@@ -33,8 +33,6 @@ public class Pergunta {
     @Column(nullable = false)
     private TipoPergunta tipo;
 
-    private Integer peso = 1;
-
     @OneToMany(mappedBy = "pergunta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PerguntaOpcao> opcoes;
 }

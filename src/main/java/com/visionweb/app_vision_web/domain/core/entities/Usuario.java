@@ -24,13 +24,9 @@ public class Usuario {
     private int id_usuario;
     private String nome;
     private String email;
-    private String departamento;
-    private String cargo;
-    private String perfil_geracional;
     private boolean ativo;
     @Enumerated(EnumType.STRING)
     private TipoUsuario tipo_usuario;
-
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
     private Login login;
 
