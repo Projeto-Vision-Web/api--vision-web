@@ -13,8 +13,6 @@ target/
 .springBeans
 .sts4-cache
 
-# Configurações do Spring Boot
-src/main/resources/application.properties
 
 ### IntelliJ IDEA ###
 .idea/
