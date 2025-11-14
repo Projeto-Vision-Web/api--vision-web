@@ -1,6 +1,7 @@
 package com.visionweb.app_vision_web.domain.core.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.visionweb.app_vision_web.domain.core.entities.Enum.TipoUsuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,5 +30,6 @@ public class Usuario {
     private TipoUsuario tipo_usuario;
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
     private Login login;
+    private Integer pontos = 0; // novo campo para gamificação
 
 }
