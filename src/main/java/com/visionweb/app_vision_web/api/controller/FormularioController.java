@@ -1,12 +1,17 @@
 package com.visionweb.app_vision_web.api.controller;
 
+import com.visionweb.app_vision_web.application.dto.ColetaResponseDto;
 import com.visionweb.app_vision_web.application.dto.FormularioCreateDto;
 import com.visionweb.app_vision_web.application.dto.FormularioResponseDto;
+import com.visionweb.app_vision_web.application.dto.PublicarColetaDto;
+import com.visionweb.app_vision_web.domain.contracts.service.ColetaService;
 import com.visionweb.app_vision_web.domain.contracts.service.FormularioService;
+import com.visionweb.app_vision_web.domain.core.entities.Coleta;
 import com.visionweb.app_vision_web.domain.core.entities.Empresa;
 import com.visionweb.app_vision_web.domain.core.entities.Formulario;
 import com.visionweb.app_vision_web.domain.core.entities.Usuario;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +24,11 @@ import java.util.List;
 public class FormularioController {
 
     private final FormularioService formularioService;
+    private final ColetaService coletaService;
 
-    public FormularioController(FormularioService formularioService) {
+    public FormularioController(FormularioService formularioService, ColetaService coletaService) {
         this.formularioService = formularioService;
+        this.coletaService = coletaService;
     }
 
     @PostMapping
@@ -42,6 +49,17 @@ public class FormularioController {
                 formSalvo.getEmpresa() != null ? formSalvo.getEmpresa().getId_empresa() : null
         );
         return ResponseEntity.created(URI.create("/api/formularios/" + formSalvo.getId())).body(body);
+    }
+
+    @PostMapping("/{id}/publicar")
+    public ResponseEntity<ColetaResponseDto> publicar(@PathVariable Integer id, @RequestBody PublicarColetaDto dto) throws Exception{
+
+        String canal = dto.canal() != null ? dto.canal().name() : "";
+
+        Coleta coleta = coletaService.criarColetaAoPublicar(id, dto.idEmpresa(), dto.periodoRef(), canal);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ColetaResponseDto(coleta.getId(), id, coleta.getEmpresa().getId_empresa(),coleta.getPeriodoRef(), coleta.getCanal(), "CRIADA",  LocalDateTime.now()));
     }
 
     @GetMapping("/{id}")

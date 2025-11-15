@@ -4,6 +4,7 @@ import com.visionweb.app_vision_web.domain.core.entities.Enum.Canal;
 import com.visionweb.app_vision_web.domain.core.entities.Enum.StatusColeta;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import java.util.List;
 @Table(name = "coleta")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Coleta {
 
     @Id
