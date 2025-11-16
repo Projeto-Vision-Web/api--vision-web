@@ -2,6 +2,7 @@ package com.visionweb.app_vision_web.domain.core.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @Table(name = "coleta_participante")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ColetaParticipante {
 
     @EmbeddedId
