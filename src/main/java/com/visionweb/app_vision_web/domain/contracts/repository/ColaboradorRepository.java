@@ -11,4 +11,12 @@ public interface ColaboradorRepository extends JpaRepository<Colaborador, Intege
 
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN TRUE ELSE FALSE END FROM Colaborador c WHERE c.usuario.id_usuario = :idUsuario")
     boolean existsByUsuarioIdUsuario(@Param("idUsuario") int idUsuario);
+
+    @Query("""
+           SELECT COUNT(c)
+           FROM Colaborador c
+           WHERE c.empresa.id_empresa = :empresaId
+           """)
+    long countByEmpresa(@Param("empresaId") Integer empresaId);
+
 }
