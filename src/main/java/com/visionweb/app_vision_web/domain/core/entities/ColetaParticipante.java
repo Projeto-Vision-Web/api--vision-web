@@ -1,20 +1,18 @@
 package com.visionweb.app_vision_web.domain.core.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Data
-@Entity
-@Table(name = "coleta_participante")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
+@Table(name = "coleta_participante")
 public class ColetaParticipante {
 
     @EmbeddedId
@@ -37,14 +35,3 @@ public class ColetaParticipante {
     private LocalDateTime respondidoEm;
 }
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Embeddable
-class ColetaParticipanteId implements Serializable {
-    @Column(name = "id_coleta")
-    private Integer idColeta;
-
-    @Column(name = "id_colaborador")
-    private Integer idColaborador;
-}

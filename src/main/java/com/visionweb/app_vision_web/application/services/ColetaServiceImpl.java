@@ -26,6 +26,8 @@ public class ColetaServiceImpl  implements ColetaService {
     private final PerguntaOpcaoRepository perguntaOpcaoRepository;
     private final RespostaRepository respostaRepository;
     private final ColetaParticipanteRepository coletaParticipanteRepository;
+    private final NlpService nlpService;
+    private final FeedbackProcessadoRepository feedbackProcessadoRepository;
 
     public ColetaServiceImpl(ColetaRepository coletaRepository,
                              FormularioRepository formularioRepository,
@@ -33,7 +35,7 @@ public class ColetaServiceImpl  implements ColetaService {
                              ColaboradorRepository colaboradorRepository,
                              PerguntaRepository perguntaRepository,
                              PerguntaOpcaoRepository perguntaOpcaoRepository,
-                             RespostaRepository respostaRepository, ColetaParticipanteRepository coletaParticipanteRepository) {
+                             RespostaRepository respostaRepository, ColetaParticipanteRepository coletaParticipanteRepository, NlpService nlpService, FeedbackProcessadoRepository feedbackProcessadoRepository) {
         this.coletaRepository = coletaRepository;
         this.formularioRepository = formularioRepository;
         this.empresaRepository = empresaRepository;
@@ -42,6 +44,8 @@ public class ColetaServiceImpl  implements ColetaService {
         this.perguntaOpcaoRepository = perguntaOpcaoRepository;
         this.respostaRepository = respostaRepository;
         this.coletaParticipanteRepository = coletaParticipanteRepository;
+        this.nlpService = nlpService;
+        this.feedbackProcessadoRepository = feedbackProcessadoRepository;
     }
 
     // -------------------------------------------------
@@ -156,13 +160,10 @@ public class ColetaServiceImpl  implements ColetaService {
         Colaborador colaborador = colaboradorRepository.findById(dto.idColaborador())
                 .orElseThrow(() -> new RuntimeException("Colaborador não encontrado"));
 
-        // Se quiser bloquear resposta duplicada por colaborador+coleta,
-        // crie esse método no RespostaRepository:
-        // boolean existsByColeta_IdAndColaborador_Id(Integer idColeta, Integer idColaborador);
-        //
-        // if (respostaRepository.existsByColeta_IdAndColaborador_Id(idColeta, colaborador.getId())) {
-        //     throw new RuntimeException("Colaborador já respondeu esta coleta");
-        // }
+
+        if (coletaParticipanteRepository.existsByColeta_IdAndColaborador_Id(idColeta, colaborador.getId())) {
+             throw new RuntimeException("Colaborador já respondeu esta coleta");
+        }
 
         int totalRespondidas = 0;
 
@@ -183,21 +184,41 @@ public class ColetaServiceImpl  implements ColetaService {
                     .build();
 
             respostaRepository.save(resposta);
+
+            if (pergunta.getTipo() == TipoPergunta.TEXTO) {
+                var analise = nlpService.analisarTexto(resposta.getValorResposta());
+
+                FeedbackProcessado feedback = FeedbackProcessado.builder()
+                        .resposta(resposta)
+                        .sentimento(analise.sentimento().name())
+                        .scoreSentimento(analise.scoreSentimento())
+                        .cluster(analise.cluster())
+                        .riscoTurnover(analise.riscoTurnover())
+                        .build();
+
+                feedbackProcessadoRepository.save(feedback);
+            }
             totalRespondidas++;
+
         }
 
-        ColetaParticipante coletaParticipante = ColetaParticipante.builder()
+        ColetaParticipanteId cpId = new ColetaParticipanteId(
+                coleta.getId(),
+                colaborador.getId()
+        );
+
+        ColetaParticipante cp = ColetaParticipante.builder()
+                .id(cpId)
                 .coleta(coleta)
                 .colaborador(colaborador)
                 .enviadoEm(LocalDateTime.now())
                 .respondidoEm(LocalDateTime.now())
                 .build();
 
-        coletaParticipanteRepository.save(coletaParticipante);
+        coletaParticipanteRepository.save(cp);
 
-        // (Opcional) aqui você pode:
-        // - somar pontos de gamificação
-        // - acionar serviço de NLP para respostas abertas
+
+
 
         return new RespostaColetaResponseDto(
                 idColeta,
